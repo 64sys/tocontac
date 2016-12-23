@@ -1,0 +1,138 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,92,66)
+  Icon = Picture["mail.png"]
+  Arrangement = Arrange.Vertical
+  { mnuFile Menu
+    Text = ("Archivo")
+    { nmuImport Menu
+      Text = ("Importar")
+      Picture = Picture["icon:/22/previous"]
+    }
+    { nmuExport Menu
+      Text = ("Exportar")
+      Picture = Picture["icon:/22/right"]
+    }
+    { mnuBackup Menu
+      Text = ("Respaldar")
+      Picture = Picture["icon:/22/archive"]
+    }
+    { mnuRestore Menu
+      Text = ("Restaurar")
+      Picture = Picture["icon:/22/package"]
+    }
+    { mnuQuit Menu
+      Text = ("Salir")
+      Picture = Picture["icon:/22/quit"]
+      Shortcut = "Alt+F4"
+    }
+  }
+  { mnuActions Menu
+    Text = ("Acciones")
+    { mnuEmail Menu
+      Text = ("Enviar email")
+      Picture = Picture["icon:/22/mail"]
+    }
+  }
+  { mnuConfiguration Menu
+    Text = ("Configuración")
+    { nmuPreferences Menu
+      Text = ("Preferencias")
+      Picture = Picture["icon:/22/options"]
+    }
+  }
+  { nmuReports Menu
+    Text = ("Informes")
+    { nmuReport Menu
+      Text = ("Lista de contactos")
+      Picture = Picture["icon:/22/print"]
+    }
+  }
+  { mnuInfo Menu
+    Text = ("Información")
+    { nmuAbout Menu
+      Text = ("Acerca de")
+      Picture = Picture["icon:/22/question"]
+    }
+    { nmuHelp Menu
+      Text = ("Ayuda")
+      Picture = Picture["icon:/22/help"]
+    }
+  }
+  { Panel1 Panel
+    MoveScaled(0,1,64,5)
+    Arrangement = Arrange.Horizontal
+    { tobEmail ToolButton
+      MoveScaled(3,1,4,4)
+      Picture = Picture["icon:/22/mail"]
+    }
+    { tobPreferences ToolButton
+      MoveScaled(10,1,4,4)
+      Picture = Picture["icon:/22/options"]
+    }
+    { tobReport ToolButton
+      MoveScaled(18,1,4,4)
+      Picture = Picture["icon:/22/print"]
+    }
+    { btoSearch ButtonBox
+      MoveScaled(26,1,24,4)
+      Expand = True
+    }
+  }
+  { HSplit1 HSplit
+    MoveScaled(1,8,86,32)
+    Expand = True
+    { trvEntities TreeView
+      MoveScaled(6,4,16,16)
+    }
+    { Panel4 Panel
+      MoveScaled(27,2,56,29)
+      Expand = True
+      Arrangement = Arrange.Vertical
+      { Panel3 Panel
+        MoveScaled(0,0,41,19)
+        Expand = True
+        Arrangement = Arrange.Fill
+        { grwData GridView
+          MoveScaled(2,2,38,16)
+          Expand = True
+        }
+      }
+      { pnlDataFilter3 Panel
+        MoveScaled(0,21,41,4)
+        Background = Color.TextBackground
+        Arrangement = Arrange.Horizontal
+        { tobNewRecord ToolButton
+          MoveScaled(0,0,4,4)
+          ToolTip = ("Agregar un registro")
+          Picture = Picture["icon:/16/new"]
+        }
+        { tobSaveRecord ToolButton
+          MoveScaled(4,0,4,4)
+          ToolTip = ("Guardar registro")
+          Picture = Picture["icon:/16/save"]
+        }
+        { tobDeleteRecord ToolButton
+          MoveScaled(9,0,4,4)
+          ToolTip = ("Borrar registro")
+          Picture = Picture["icon:/16/delete"]
+        }
+        { tobEditRecord ToolButton
+          MoveScaled(15,0,4,4)
+          ToolTip = ("Agregar un registro")
+          Picture = Picture["icon:/16/edit"]
+        }
+      }
+    }
+  }
+  { pnlControls Panel
+    MoveScaled(1,42,62,10)
+  }
+  { Panel2 Panel
+    MoveScaled(1,54,62,5)
+    { lblInformation Label
+      MoveScaled(2,0,24,4)
+    }
+  }
+}

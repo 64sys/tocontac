@@ -1,0 +1,81 @@
+' Gambas module file
+
+' Este módulo hara una serie de comprobaciones antes de iniciar la aplicacion.
+'-Dependencias
+'-Directorios locales
+
+Public Function StartProgram() As Integer
+
+  ' Estado de las dependencias.
+  Dim strPackages As String
+  Dim stxPackagesTmp As New String[]
+  Dim stxPackages As New String[]
+  Dim intPkg As Integer
+  Dim strDBName As String
+  Dim strDBHost As String
+  Dim strDBPath As String
+  Dim intRet As Integer
+
+  ' Estado de las dependencias.//////////////////////////////////////////////////////////////////////
+  If Exist("depend.txt") Then
+    strPackages = ""
+    stxPackagesTmp.Clear
+    stxPackages.Clear
+
+    strPackages = File.Load("depend.txt") ' Este es un archivo de texto que contiene una lista de paquetes uno debajo del otro
+
+    If InStr(strPackages, "\n") > -1 Then
+      stxPackagesTmp = Split(strPackages, "\n")
+    Else
+      If String.Len(strPackages) > 0 Then
+        stxPackagesTmp.Add(strPackages)
+      Endif
+    Endif
+
+    For intPkg = 0 To stxPackagesTmp.Max
+      If stxPackagesTmp[intPkg] <> "" Then
+        stxPackages.Add(stxPackagesTmp[intPkg])
+      Endif
+    Next
+
+    If stxPackages.Count > 0 Then
+
+      Msys.PkgDep(stxPackages)
+    Else
+      Print "El archivo de dependencias existe pero esta vacio"
+    Endif
+  Else
+    Print "No es necesario instalar dependencias para este programa"
+  Endif
+
+  ' Existencia de directorio de la aplicacion en el directorio home. Esto se ejecutara una unica vez.
+  If Exist(User.Home &/ "." & Application.Name) = False Then
+    Mkdir User.Home &/ "." & Application.Name
+  Endif
+  ' Aqui se pueden agregar mas comprobaciones de este tipo para copia de archivos de configuracion y demas cosas similares
+
+  ' Carga de los parametros de gb.settings.//////////////////////////////////////////////////////////
+  FMain.stxProgram.Clear
+  strDBHost = User.Home &/ "." & Application.Name
+  strDBName = "contacts.sqlite" 'Application.Name & ".sqlite"
+  strDBPath = strDBHost &/ strDBName
+
+  FMain.stxProgram.Add(Settings["Database/Host", strDBHost])
+  FMain.stxProgram.Add(Settings["Database/Name", strDBName])
+  FMain.stxProgram.Add(Settings["Database/Path", strDBPath])
+
+  ' Existencia de la base de datos.//////////////////////////////////////////////////////////////////
+
+  FMain.conProgram = MData.DBSqlite(FMain.stxProgram)
+  FMain.conProgram.Name = FMain.stxProgram[1]
+  FMain.conProgram.Open
+
+  If FMain.conProgram.Opened Then
+    intRet = 1
+  Else
+    intRet = 0
+  Endif
+
+  Return intRet
+
+End

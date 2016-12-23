@@ -1,0 +1,80 @@
+' Gambas class file
+
+Public stxProgram As New String[] ' Parametros del programa
+Public conProgram As New Connection ' Conexión a la base de datos
+Public resProgram As Result
+Public stxTablesFields As New String[] ' Parametros de los campos de las tablas del programa
+Public stxTables As New String[]
+
+Public Sub Form_Open()
+
+  Dim tbl As Table
+  Dim intTree As Integer
+  Dim strFieldTmp As String
+  Dim strText As String
+  Dim strKey As String
+
+  If MStarter.StartProgram() = 1 Then
+    stxProgram.Add("select * from contacts")
+    resProgram = conProgram.Exec(stxProgram[3])
+
+    stxTablesFields.Clear
+
+    For Each tbl In conProgram.Tables
+      If tbl.System = False Then
+        stxTablesFields.Insert(MData.getTableFields(conProgram, tbl.Name))
+        stxTables.Add(tbl.Name)
+      Endif
+    Next
+
+    If stxTables.Count > 0 Then
+      trvEntities.Add(conProgram.Name, "Database")
+      For intTree = 0 To stxTables.Max
+        strText = stxTables[intTree]
+        strKey = stxTables[intTree]
+
+        trvEntities.Add(strKey, strText,, conProgram.Name)
+
+      Next
+
+    Endif
+
+  Endif
+
+End
+
+Public Sub grwData_Data(Row As Integer, Column As Integer)
+
+  If resProgram.Available Then
+
+    resProgram.MoveTo(Row)
+
+    grwData.Data.Text = resProgram[resProgram.Fields[Column].Name]
+
+  Else
+    grwData.Data.Text = ""
+  Endif
+
+End
+
+Public Sub tobNewRecord_Click()
+
+  Dim strTable As String
+  Dim intField As Integer
+
+  strTable = "contacts"
+
+  'If stxTablesFields.Count > 0 Then
+  ' For intField = 0 To stxTablesFields.Max
+  '  If Split(stxTablesFields[intField], ":")[0] = strTable Then
+
+  FData.RunEditor(conProgram, strTable)
+  'Print Split(stxTablesFields[intField], ":")[1]
+
+  'Endif
+  ' Next
+  'Endif
+
+  'MData.RecordNew(conProgram, strTable)
+
+End

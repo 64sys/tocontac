@@ -1,0 +1,104 @@
+' Gambas class file
+
+Public conData As Connection
+
+Public Sub RunEditor(con As Connection, strTable As String) ' As Boolean
+
+  'Return Not Me.ShowModal()
+
+  conData = con
+
+  If MakeControls(strTable) = 1 Then
+    Me.ShowModal()
+  Endif
+
+End
+
+Public Sub btnOK_Click()
+
+  Me.Close
+
+End
+
+Public Sub btnCancel_Click()
+
+  Me.Close
+
+End
+
+Public Function MakeControls(strTable As String) As Integer
+
+  Dim intState As Integer
+  Dim intField As Integer
+
+  Dim strTableTmp As String
+  Dim strFieldName As String
+
+  Dim pnl As Panel
+  Dim btn As Button
+  Dim txo As TextBox
+  Dim lbl As Label
+  Dim cmo As ComboBox
+  Dim strForeignTab As String
+  Dim strForeignIndex As String
+  Dim strForeignShow As String
+  Dim strComboSql As String
+  Dim resCombo As Result
+
+  intState = 0
+  pnlData.Children.Clear
+  pnlData.Arrangement = 3
+
+  If FMain.stxTablesFields.Count > 0 Then
+    For intField = 0 To FMain.stxTablesFields.Max
+      If Split(FMain.stxTablesFields[intField], ":")[0] = strTable Then
+        strFieldName = Split(FMain.stxTablesFields[intField], ":")[1]
+        strForeignTab = Split(FMain.stxTablesFields[intField], ":")[7]
+        strForeignIndex = Split(FMain.stxTablesFields[intField], ":")[8]
+        strForeignShow = Split(FMain.stxTablesFields[intField], ":")[9]
+
+        pnl = New Panel(pnlData)
+        pnl.Name = "pnl-" & strFieldName
+        pnl.Width = 120
+        pnl.Height = 56
+        pnl.Arrangement = 2
+
+        lbl = New Label(pnl)
+        lbl.Name = "lbl-" & strFieldName
+        lbl.Text = strFieldName
+        lbl.Width = 120
+        lbl.Height = 28
+
+        Select strForeignTab
+          Case ""
+            txo = New TextBox(pnl)
+            txo.Name = "txo-" & strFieldName
+            txo.Width = 120
+            txo.Height = 28
+
+          Case Else
+            strComboSql = "select " & strForeignIndex & ", "
+            strComboSql &= strForeignShow & " from "
+            strComboSql &= strForeignTab & " order by " & strForeignShow & " asc"
+            resCombo = conData.Exec(strComboSql)
+            While resCombo.Available
+              cmo.Add(resCombo[strForeignShow])
+              resCombo.MoveNext
+            Wend
+
+            cmo = New ComboBox(pnl)
+            cmo.Name = "cmo-" & strFieldName
+            cmo.Width = 120
+            cmo.Height = 28
+        End Select
+
+        Print Split(FMain.stxTablesFields[intField], ":")[1]
+        intState = 1
+
+      Endif
+    Next
+  Endif
+
+  Return intState
+
+End
