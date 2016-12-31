@@ -1,20 +1,54 @@
 ' Gambas class file
 
 Public conData As Connection
+Public strTab As String
+Public intKeyCurrent As Integer
 
-Public Sub RunEditor(con As Connection, strTable As String) ' As Boolean
-
-  'Return Not Me.ShowModal()
+Public Sub RunEditor(con As Connection, strTable As String, Optional intKey As Integer) ' As Boolean
 
   conData = con
+  strTab = strTable
+  If intKey Then
+    intKeyCurrent = intKey
+  Endif
 
-  If MakeControls(strTable) = 1 Then
+  If MakeControls(strTable, intKey) = 1 Then
     Me.ShowModal()
   Endif
 
 End
 
 Public Sub btnOK_Click()
+
+  Dim objp As Object
+  Dim objx As Object
+  Dim int As Integer
+  Dim stxFields As New String[]
+  Dim stxValues As New String[]
+  Dim strField As String
+  Dim intKey As Integer
+
+  stxFields.Clear
+
+  For Each objp In pnlData.Children
+    If Object.Type(objp) = "Panel" Then
+      For Each objx In objp.Children
+        Select Object.Type(objx)
+          Case "TextBox", "ComboBox"
+            stxValues.Add(objx.Tag & ":" & objx.Text)
+        End Select
+
+      Next
+    Endif
+  Next
+
+  If intKeyCurrent Then ' Editando registro existente
+    MData.RecordWrite(conData, strTab, FMain.stxTablesFields, stxValues)
+  Else ' Nuevo registro
+    MData.RecordNew(conData, strTab, FMain.stxTablesFields, stxValues)
+  Endif
+
+  FMain.UpdateGrid()
 
   Me.Close
 
@@ -26,7 +60,7 @@ Public Sub btnCancel_Click()
 
 End
 
-Public Function MakeControls(strTable As String) As Integer
+Public Function MakeControls(strTable As String, Optional intKey As Integer) As Integer
 
   Dim intState As Integer
   Dim intField As Integer
@@ -39,19 +73,43 @@ Public Function MakeControls(strTable As String) As Integer
   Dim txo As TextBox
   Dim lbl As Label
   Dim cmo As ComboBox
+
   Dim strForeignTab As String
   Dim strForeignIndex As String
   Dim strForeignShow As String
   Dim strComboSql As String
   Dim resCombo As Result
 
+  Dim resEdit As Result
+  Dim strSQLEdit As String
+  Dim strFieldKey As String
+
   intState = 0
   pnlData.Children.Clear
   pnlData.Arrangement = 3
 
-  If FMain.stxTablesFields.Count > 0 Then
+  If intKey <> "" Then
     For intField = 0 To FMain.stxTablesFields.Max
       If Split(FMain.stxTablesFields[intField], ":")[0] = strTable Then
+        If Split(FMain.stxTablesFields[intField], ":")[5] = "YK" Then
+          strFieldKey = Split(FMain.stxTablesFields[intField], ":")[1]
+        Endif
+      Endif
+
+    Next
+    strSQLEdit = "select * from " & strTable
+    strSQLEdit &= " where " & strFieldKey
+    strSQLEdit &= "='" & CStr(intKey) & "'"
+
+    resEdit = conData.Exec(strSQLEdit)
+
+  Endif
+
+  If FMain.stxTablesFields.Count > 0 Then
+    For intField = 0 To FMain.stxTablesFields.Max
+
+      If Split(FMain.stxTablesFields[intField], ":")[0] = strTable Then
+
         strFieldName = Split(FMain.stxTablesFields[intField], ":")[1]
         strForeignTab = Split(FMain.stxTablesFields[intField], ":")[7]
         strForeignIndex = Split(FMain.stxTablesFields[intField], ":")[8]
@@ -73,31 +131,75 @@ Public Function MakeControls(strTable As String) As Integer
           Case ""
             txo = New TextBox(pnl)
             txo.Name = "txo-" & strFieldName
+            txo.Tag = strFieldName
             txo.Width = 120
             txo.Height = 28
+
+            If resEdit.Available Then
+              txo.Text = resEdit[strFieldName]
+            Endif
 
           Case Else
             strComboSql = "select " & strForeignIndex & ", "
             strComboSql &= strForeignShow & " from "
             strComboSql &= strForeignTab & " order by " & strForeignShow & " asc"
             resCombo = conData.Exec(strComboSql)
-            While resCombo.Available
-              cmo.Add(resCombo[strForeignShow])
-              resCombo.MoveNext
-            Wend
 
             cmo = New ComboBox(pnl)
             cmo.Name = "cmo-" & strFieldName
+            cmo.Tag = strFieldName
             cmo.Width = 120
             cmo.Height = 28
+            While resCombo.Available
+              cmo.Add(resCombo[strForeignShow])
+              If resEdit.Available Then
+                If resCombo[strForeignIndex] = resEdit[strFieldName] Then
+                  cmo.Text = resCombo[strForeignShow]
+                Endif
+              Endif
+              resCombo.MoveNext
+            Wend
+
         End Select
 
         Print Split(FMain.stxTablesFields[intField], ":")[1]
         intState = 1
 
       Endif
+
     Next
   Endif
+
+  Return intState
+
+End
+
+Public Function WriteRecord() As Integer
+
+  Dim objp As Object
+  Dim objx As Object
+  Dim int As Integer
+  Dim stxFields As New String[]
+  Dim stxValues As New String[]
+  Dim strField As String
+  Dim intKey As Integer
+  Dim intState As Integer
+
+  stxFields.Clear
+
+  For Each objp In pnlData.Children
+    If Object.Type(objp) = "Panel" Then
+      For Each objx In objp.Children
+        Select Object.Type(objx)
+          Case "TextBox", "ComboBox"
+            stxValues.Add(objx.Tag & ":" & objx.Text)
+        End Select
+
+      Next
+    Endif
+  Next
+
+  MData.RecordNew(conData, strTab, FMain.stxTablesFields, stxValues)
 
   Return intState
 

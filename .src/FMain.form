@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,92,66)
+  MoveScaled(0,0,131,66)
   Icon = Picture["mail.png"]
   Arrangement = Arrange.Vertical
   { mnuFile Menu
@@ -61,45 +61,66 @@
     }
   }
   { Panel1 Panel
-    MoveScaled(0,1,64,5)
+    MoveScaled(0,1,87,5)
     Arrangement = Arrange.Horizontal
     { tobEmail ToolButton
-      MoveScaled(3,1,4,4)
+      MoveScaled(3,0,5,5)
+      Enabled = False
       Picture = Picture["icon:/22/mail"]
     }
     { tobPreferences ToolButton
-      MoveScaled(10,1,4,4)
+      MoveScaled(10,0,5,5)
       Picture = Picture["icon:/22/options"]
     }
     { tobReport ToolButton
-      MoveScaled(18,1,4,4)
+      MoveScaled(18,0,5,5)
       Picture = Picture["icon:/22/print"]
     }
-    { btoSearch ButtonBox
-      MoveScaled(26,1,24,4)
+    { Panel5 Panel
+      MoveScaled(40,0,7,5)
       Expand = True
+    }
+    { tgoOrder ToggleButton
+      MoveScaled(49,0,5,5)
+      Enabled = False
+      ToolTip = ("Editar el orden de la lista")
+      Picture = Picture["icon:/16/sort-ascent"]
+      Border = False
+    }
+    { btoSearch ButtonBox
+      MoveScaled(62,1,24,4)
     }
   }
   { HSplit1 HSplit
     MoveScaled(1,8,86,32)
     Expand = True
+    Border = False
     { trvEntities TreeView
-      MoveScaled(6,4,16,16)
+      MoveScaled(7,8,16,16)
+      Border = False
     }
     { Panel4 Panel
-      MoveScaled(27,2,56,29)
+      MoveScaled(28,2,56,29)
       Expand = True
       Arrangement = Arrange.Vertical
+      { pnlDataFilter ScrollView
+        MoveScaled(0,1,41,4)
+        Background = Color.TextBackground
+        Arrangement = Arrange.Horizontal
+        ScrollBar = Scroll.None
+      }
       { Panel3 Panel
-        MoveScaled(0,0,41,19)
+        MoveScaled(0,6,41,14)
         Expand = True
         Arrangement = Arrange.Fill
         { grwData GridView
-          MoveScaled(2,2,38,16)
+          MoveScaled(1,1,38,12)
           Expand = True
+          Border = False
+          Mode = Select.Multiple
         }
       }
-      { pnlDataFilter3 Panel
+      { pnlDataControls Panel
         MoveScaled(0,21,41,4)
         Background = Color.TextBackground
         Arrangement = Arrange.Horizontal

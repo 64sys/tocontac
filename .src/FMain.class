@@ -4,7 +4,18 @@ Public stxProgram As New String[] ' Parametros del programa
 Public conProgram As New Connection ' Conexión a la base de datos
 Public resProgram As Result
 Public stxTablesFields As New String[] ' Parametros de los campos de las tablas del programa
+Public stxViewWdths As New String[] ' Ancho de las columnas en el gridview
 Public stxTables As New String[]
+
+Public strSQLData As String
+Public resData As Result
+Public strCurrent As String ' Current Table
+Public stxOrder As New String[]
+Public strOrderMode As String ' Modo del orden d ela lista (view/edit)
+Public stxOrderColumn As New Integer[]
+Public stxOrderType As New String[]
+Public stxFieldTmp As New String[] ' lista de campos para crear los botones de filtrospubli
+Public strGridState As String
 
 Public Sub Form_Open()
 
@@ -37,19 +48,31 @@ Public Sub Form_Open()
 
       Next
 
+      If strKey = "contacts" Then
+        trvEntities.MoveTo(strKey)
+      Endif
+      trvEntities.MoveCurrent
     Endif
 
   Endif
+
+  Me.Width = 1152
+  Me.Height = 768
+  HSplit1.Layout = [1, 6]
+
+  ' Modeo de edicion de la lista
+  strOrderMode = "view"
+  strGridState = "loading"
 
 End
 
 Public Sub grwData_Data(Row As Integer, Column As Integer)
 
-  If resProgram.Available Then
+  If resData.Available Then
 
-    resProgram.MoveTo(Row)
+    resData.MoveTo(Row)
 
-    grwData.Data.Text = resProgram[resProgram.Fields[Column].Name]
+    grwData.Data.Text = resData[resData.Fields[Column].Name]
 
   Else
     grwData.Data.Text = ""
@@ -59,22 +82,564 @@ End
 
 Public Sub tobNewRecord_Click()
 
-  Dim strTable As String
-  Dim intField As Integer
+  FData.RunEditor(conProgram, strCurrent)
 
-  strTable = "contacts"
+End
 
-  'If stxTablesFields.Count > 0 Then
-  ' For intField = 0 To stxTablesFields.Max
-  '  If Split(stxTablesFields[intField], ":")[0] = strTable Then
+Public Sub tobDeleteRecord_Click()
 
-  FData.RunEditor(conProgram, strTable)
-  'Print Split(stxTablesFields[intField], ":")[1]
+  cmdRecordDelete()
 
+End
+
+Public Sub tobEditRecord_Click()
+
+  cmdRecordEdit()
+
+End
+
+Public Sub trvEntities_Click()
+
+  'If strCurrent <> trvEntities.Current.Text Then
+  'strCurrent = trvEntities.Current.Text
   'Endif
-  ' Next
+  'Wait 0.2
+
+  'strGridState = "loading"
+
+  'If strCurrent <> "" Then
+  'UpdateGrid()
+
+  'Wait 0.01
+
+  ' If strGridState = "loaded" Then
+  '   cmdArrangeButtonFilters(stxFieldTmp)
+  ' Endif
+
+End
+
+Public Sub trvEntities_Select()
+
+  ' If strCurrent <> trvEntities.Current.Text Then
+  'strCurrent = trvEntities.Current.Text
+  ' Endif
+  'Wait 0.2
+  strGridState = "loading"
+
+  'If strCurrent <> "" Then
+  If UpdateGrid() = 1 Then
+    If strGridState = "loaded" Then
+      cmdArrangeButtonFilters(stxFieldTmp)
+    Endif
+  Endif
   'Endif
 
-  'MData.RecordNew(conProgram, strTable)
+End
+
+Public Function UpdateGrid() As Integer
+
+  Dim stxTitles As New String[]
+  'Dim stxFieldTmp As New String[]
+  Dim stxOrder As New String[]
+
+  Dim intT As Integer
+  Dim fld As ResultField
+  Dim intFld As Integer
+  Dim intWidth As Integer
+  Dim intCol As Integer
+  Dim intOrd As Integer
+  Dim resfld As ResultField
+  Dim strOrderTmp As String
+  Dim intTmp As Integer
+  Dim intEx As Integer
+
+  grwData.Header = 1 ' Muestra solo el encabezado
+  grwData.ScrollBar = 3 ' Muestra los scrol vertical y horizontal
+  grwData.Mode = Select.Multiple
+
+  stxFieldTmp.Clear
+
+  strCurrent = trvEntities.Current.Text
+
+  If strCurrent <> "Database" Then
+
+    Select strCurrent
+      Case "contacts"
+        stxTitles.Add("idx")
+        stxTitles.Add("Nombre")
+        stxTitles.Add("Apellido")
+        stxTitles.Add("Apodo")
+        stxTitles.Add("Cumpleaños")
+        stxTitles.Add("Organización")
+        stxTitles.Add("Teléfono fijo")
+        stxTitles.Add("Teléfono móvil")
+        stxTitles.Add("Email")
+        stxTitles.Add("País")
+
+        tgoOrder.Enabled = True
+
+      Case "names"
+        stxTitles.Add("idx")
+        stxTitles.Add("Nombre")
+        stxTitles.Add("Total")
+
+        tgoOrder.Enabled = True
+
+      Case "niks"
+        stxTitles.Add("idx")
+        stxTitles.Add("Apodo")
+        stxTitles.Add("Total")
+
+        tgoOrder.Enabled = True
+
+      Case "countries"
+        stxTitles.Add("idx")
+        stxTitles.Add("País")
+        stxTitles.Add("Teléfono")
+        stxTitles.Add("Capital")
+        stxTitles.Add("Código 2")
+        stxTitles.Add("Código 3")
+        stxTitles.Add("Total")
+        stxTitles.Add("Notas")
+
+        tgoOrder.Enabled = True
+
+      Case "orgs"
+        stxTitles.Add("idx")
+        stxTitles.Add("Organización")
+        stxTitles.Add("Total")
+
+        tgoOrder.Enabled = True
+
+      Case "servers"
+        stxTitles.Add("idx")
+        stxTitles.Add("Servidor de email")
+        stxTitles.Add("Total")
+
+        tgoOrder.Enabled = True
+
+      Case "families"
+        stxTitles.Add("idx")
+        stxTitles.Add("Apellido")
+        stxTitles.Add("Total")
+
+        tgoOrder.Enabled = True
+
+      Case Else
+        stxTitles.Clear
+        grwData.Rows.Count = 0
+
+        tgoOrder.Enabled = False
+
+    End Select
+
+    strSQLData = "select * from "
+    strSQLData &= "view_" & strCurrent
+
+    resData = conProgram.Exec(strSQLData)
+    For Each resfld In resData.Fields
+      stxFieldTmp.Add(resfld.Name)
+    Next
+
+    For intOrd = 0 To stxFieldTmp.Max
+      strOrderTmp = Settings[strCurrent & "-order/" & CStr(intOrd), ""]
+      If strOrderTmp <> "" Then
+        Select Split(strOrderTmp, ":")[1]
+          Case "asc", "desc"
+            stxOrder.Add(strOrderTmp)
+        End Select
+      Endif
+    Next
+
+    If stxOrder.Count > 0 Then
+      strSQLData &= " order by "
+
+      For intEx = 0 To stxOrder.Max
+
+        strSQLData &= stxFieldTmp[Split(stxOrder[intEx], ":")[0]] ' Campo
+
+        If intEx = stxOrder.Max
+          strSQLData &= " " & Split(stxOrder[intEx], ":")[1]  ' ASC/DESC
+        Else
+          strSQLData &= " " & Split(stxOrder[intEx], ":")[1] & ", " ' ASC/DESC
+        Endif
+
+      Next
+      resData = conProgram.Exec(strSQLData)
+      'Endif
+    Endif
+
+    grwData.Rows.Count = 0
+    If resData.Available Then
+      If resProgram.Count > 0 Then
+        grwData.Rows.Count = 0
+        grwData.Rows.Count = resData.Count
+      Endif
+    Endif
+
+    grwData.Columns.Count = resData.Fields.Count
+
+    intFld = 0
+
+    cmdArrangeButtonFilters(stxFieldTmp)
+
+    For intCol = 0 To stxTitles.Max
+
+      grwData.Columns[intCol].Title = stxTitles[intCol]
+      grwData.Columns[intCol].Width = Settings[strCurrent & "-width/" & CStr(intCol), 75]
+      strGridState = "loading"
+
+    Next
+  Endif
+
+  If strGridState = "loading" Then
+    strGridState = "loaded"
+  Endif
+
+  Return 1
+
+End
+
+Public Sub Form_Resize()
+
+  Print Me.Width & "x" & Me.Height
+
+End
+
+Public Sub cmdRecordEdit()
+
+  Dim intKey As Integer
+
+  If grwData.Current Then
+    intKey = CInt(grwData[grwData.Row, 0].Text)
+    FData.RunEditor(conProgram, strCurrent, intKey)
+  Else
+    Message.Info("Debe seleccionar un registro de la lista")
+  Endif
+
+End
+
+Public Sub cmdRecordDelete()
+
+  Dim intKey As Integer
+  Dim intCount As Integer
+  Dim intOk As Integer
+  Dim intR As Integer
+
+  For intR = 0 To grwData.Rows.Max
+    If grwData.Rows[intR].Selected = True Then
+      Inc intCount
+      intKey = CInt(grwData[intR, 0].Text)
+      If MData.RecordDelete(conProgram, strCurrent, stxTablesFields, intKey) = -1 Then
+        Inc intOk
+      Endif
+    Endif
+  Next
+
+  If intCount > 0 Then
+    If intOk = intCount Then
+      UpdateGrid()
+    Else
+      Select intOk
+        Case 0
+          Message.Info("No se pudo borrar ningun registro")
+        Case Else
+          Message.Info("Hay registros que no se pudieron borrar")
+      End Select
+    Endif
+    UpdateGrid()
+  Else
+    Message.Info("Debe seleccionar registros de la lista")
+  Endif
+
+End
+
+Public Sub grwData_Click()
+
+  Dim intR As Integer
+  Dim strOrder As String
+
+  tobEmail.Enabled = False
+
+  Select grwData.Row
+    Case -1
+
+      strOrder = Settings[strCurrent & "-order/" & CStr(grwData.Column), "asc"]
+      Select strOrder
+        Case "asc"
+          strOrder = "desc"
+        Case "desc", ""
+          strOrder = "asc"
+      End Select
+
+      Select Mouse.Button
+        Case 1 ' Boton izquierdo, ordenar los datos segun ese campo con "sql" y "result"
+
+          Settings[strCurrent & "-order/" & CStr(grwData.Column)] = strOrder
+
+      End Select
+
+      UpdateGrid()
+    Case Else
+
+      Select strCurrent
+        Case "contacts", "countries", "families", "names", "niks", "orgs", "servers"
+
+          For intR = 0 To grwData.Rows.Max
+            If grwData.Rows[intR].Selected = True Then
+              tobEmail.Enabled = True
+              Break
+            Endif
+          Next
+
+      End Select
+
+  End Select
+
+End
+
+Public Sub grwData_ColumnResize(Column As Integer)
+
+  Select strCurrent
+    Case "contacts", "countries", "families", "names", "niks", "orgs", "servers"
+      Settings[strCurrent & "-width/" & CStr(Column)] = grwData.Columns[Column].Width
+
+      Wait 0.01
+
+      If strGridState = "loaded" Then
+        cmdArrangeButtonFilters(stxFieldTmp)
+      Endif
+
+      'UpdateGrid()
+
+  End Select
+
+End
+
+Public Sub grwData_ColumnClick(Column As Integer)
+
+  Dim strOrder As String
+  Dim intCol As Integer
+  Dim intKey As Integer
+  Dim intT As Integer
+  Dim strPrint As String
+
+  strPrint = ""
+
+  If tgoOrder.Value = True Then
+
+    Select Mouse.Button
+      Case 1 ' Boton izquierdo, ordenar los datos segun ese campo con "sql" y "result"
+
+        intKey = stxOrderColumn.Find(Column)
+
+        If intKey > -1 Then
+
+          Select stxOrderType[intKey]
+            Case "asc"
+              stxOrderType[intKey] = "desc"
+            Case "desc"
+              stxOrderType[intKey] = "none"
+            Case "none"
+              stxOrderType[intKey] = "asc"
+
+          End Select
+
+        Else
+          stxOrderColumn.Add(Column)
+          stxOrderType.Add("asc")
+        Endif
+
+        For intT = 0 To stxOrderColumn.Max
+          strPrint &= stxOrderColumn[intT] & " " & stxOrderType[intT]
+        Next
+
+        Print strPrint
+        strPrint = ""
+
+        UpdateGrid()
+
+    End Select
+
+  Endif
+
+End
+
+Public Sub tgoOrder_Click()
+
+  Dim int As Integer
+  Dim intC As Integer
+  Dim strType As String
+
+  Select tgoOrder.Value ' strOrderMode
+    Case True
+
+      stxOrder.Clear
+      'Message.Info("Seleccione las columnas y los ordenes que desee")
+      strOrderMode = "edit"
+
+      For intC = 0 To grwData.Columns.Count - 1
+        strType = Settings[strCurrent & "-order/" & CStr(intC), ""]
+        If strType <> "" Then
+          If InStr(strType, ":") <> 0 Then
+            stxOrderColumn.Add(Split(strType, ":")[0])
+            stxOrderType.Add(Split(strType, ":")[1])
+
+          Else
+            stxOrderColumn.Add(intC)
+            stxOrderType.Add("none")
+          Endif
+        Else
+          stxOrderColumn.Add(intC)
+          stxOrderType.Add("none")
+        Endif
+        stxOrderColumn.Add(intC)
+        stxOrderType.Add("none")
+      Next
+
+    Case False
+
+      For int = 0 To stxOrderColumn.Max
+        Settings[strCurrent & "-order/" & CStr(int)] = stxOrderColumn[int] & ":" & stxOrderType[int]
+      Next
+
+      Settings.Save
+
+      UpdateGrid()
+
+  End Select
+
+End
+
+Public Sub cmdArrangeButtonFilters(stxFieldsNames As String[])
+
+  Dim pnlFilter As Panel
+  Dim btnFilter As Button
+  Dim txoFilter As TextBox
+  Dim strKey As String
+
+  Dim intA, intB, intXbtn As Integer
+  Dim strOrder As Variant
+
+  intXbtn = 0
+
+  pnlDataFilter.Children.Clear
+
+  For intA = 0 To stxFieldsNames.Max
+
+    pnlFilter = New Panel(pnlDataFilter)
+    With pnlFilter
+      .Name = "pnlFilter~" & stxFieldsNames[intA]
+      .Tag = intA
+      .Height = pnlDataFilter.Height
+      .Width = grwData.Columns[intA].Width
+
+      Select intA
+        Case 0
+          intXbtn = 0
+        Case Else
+          intXbtn = 0
+          For intB = 0 To intA - 1
+            intXbtn = intXbtn + grwData.Columns[intB].Width
+          Next
+      End Select
+
+      .X = intXbtn
+      .Y = 0
+      .Arrangement = 1
+
+    End With
+
+    btnFilter = New Button(pnlFilter) As "GFilterType"
+    With btnFilter
+      .Name = "btnFilter~" & stxFieldsNames[intA]
+      .Border = False
+      strOrder = Settings[strCurrent & "-order/" & CStr(intA), ""]
+      If InStr(strOrder, ":") > 0 Then
+        Select Split(strOrder, ":")[1]
+          Case "asc"
+            '.Text = "a"
+            .Picture = Picture["icon:/16/sort-ascent"]
+
+          Case "desc"
+            '.Text = "d"
+            .Picture = Picture["icon:/16/sort-descent"]
+          Case "none"
+            '.Text = ""
+            .Picture = Null
+        End Select
+      Else
+        '.Text = ""
+        .Picture = Null
+      Endif
+
+      strKey = strCurrent & ":" & stxFieldsNames[intA]
+
+      '.Expand = False
+      .Expand = True
+      .Width = pnlFilter.Height
+      .Height = pnlFilter.Height
+
+    End With
+
+    ' txoFilter = New TextBox(pnlFilter) As "GFilterValue"
+    '
+    ' With txoFilter
+    '   .Name = "txoFilter~" & stxFieldsNames[intA]
+    '   .Tag = intA
+    '   .Expand = True
+    '   .Height = pnlFilter.Height
+    '
+    ' End With
+
+  Next
+
+End
+
+Public Sub GFilterType_Click()
+
+  Dim btn As Button
+
+  btn = Last
+
+  Select btn.Picture
+    Case Null
+      'btn.Text = ""
+      btn.Picture = Picture["icon:/16/sort-ascent"]
+    Case Picture["icon:/16/sort-ascent"]
+      'btn.Text = ""
+      btn.Picture = Picture["icon:/16/sort-descent"]
+    Case Picture["icon:/16/sort-descent"]
+      'btn.Text = ""
+      btn.Picture = Null
+  End Select
+
+End
+
+Public Sub grwData_Scroll()
+
+  'Dim intColumn As Integer
+
+  pnlDataFilter.ScrollX = grwData.ScrollX
+
+  'intColumn = 1
+
+End
+
+Public Sub grwData_Arrange()
+
+  'strGridState = "loaded"
+
+End
+
+Public Sub mnuQuit_Click()
+
+  Me.Close
+
+End
+
+Public Sub grwData_DblClick()
+
+  cmdRecordEdit()
 
 End
