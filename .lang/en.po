@@ -1,0 +1,511 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: tradukisto 0.0.19\n"
+"POT-Creation-Date: 2017-01-27 22:07 UTC\n"
+"PO-Revision-Date: 2017-01-27 22:36+CET\n"
+"Last-Translator: Martín, Powerded by Tradukisto software. planeta4@openmailbox.org\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: .project:1 FMain.form:116
+msgid "Lista de contactos"
+msgstr ""
+
+#: .project:2
+msgid "Gestion de contactos"
+msgstr ""
+
+#: FAbout.class:86
+msgid "Pagina web"
+msgstr ""
+
+#: FAbout.class:91
+msgid "Código fuente"
+msgstr "Source code"
+
+#: FAbout.class:95
+msgid "Correo de contacto"
+msgstr "Contact email"
+
+#: FAbout.class:100
+msgid "Enviar un correo al desarrollador"
+msgstr ""
+
+#: FAbout.class:104
+msgid "Componentes utilizados en este programa"
+msgstr "Components used in this program"
+
+#: FAbout.class:119
+msgid "Clic para ver detalles en"
+msgstr "Click to see details in"
+
+#: FAbout.class:128
+msgid "Este programa se entrega sin ningun tipo de garantia"
+msgstr ""
+
+#: FAbout.class:135
+msgid "Licencia"
+msgstr ""
+
+#: FAbout.class:136
+msgid "Clic para ver la licencia en"
+msgstr "Click to see the license in"
+
+#: FAbout.class:142 FMain.form:125
+msgid "Acerca de"
+msgstr "About"
+
+#: FAbout.class:162
+msgid "Hola desarrolladores de"
+msgstr ""
+
+#: FAbout.form:88
+msgid "Cerrar"
+msgstr "Close"
+
+#: FConfig.class:54
+msgid "Motor de la base de datos"
+msgstr ""
+
+#: FConfig.class:55
+msgid "Ubicación de la base de datos"
+msgstr ""
+
+#: FConfig.class:56
+msgid "Nombre de la base de datos"
+msgstr ""
+
+#: FConfig.class:57
+msgid "Ruta de la base de datos"
+msgstr ""
+
+#: FConfig.class:58
+msgid "Tamaño de la ventana"
+msgstr "Window size"
+
+#: FConfig.class:59
+msgid "Directorio de exportación"
+msgstr "Export directory"
+
+#: FConfig.class:60
+msgid "Caracter seperador para exportación"
+msgstr "Seperator for export"
+
+#: FConfig.class:61
+msgid "Exportar encabezados"
+msgstr "Export headers"
+
+#: FConfig.class:62
+msgid "Directorio de importación"
+msgstr "Import directory"
+
+#: FConfig.class:63
+msgid "Caracter seperador para importación"
+msgstr "Character seperador for import"
+
+#: FConfig.form:34 FData.form:34 FTesting.form:27
+msgid "Aceptar"
+msgstr "To accept"
+
+#: FConfig.form:40 FData.form:40 FTesting.form:33
+msgid "Cancelar"
+msgstr "Cancel"
+
+#: FMain.class:29
+msgid "Ocultar la barra de filtro"
+msgstr "Hide the filter bar"
+
+#: FMain.class:33
+msgid "Mostrar la barra de filtro"
+msgstr "Show filter bar"
+
+#: FMain.class:42
+msgid "Ocultar la barra de orden"
+msgstr "Hide the order bar"
+
+#: FMain.class:46
+msgid "Mostrar la barra de orden"
+msgstr "Show order bar"
+
+#: FMain.class:53
+msgid "esta ejecutando desde"
+msgstr "Is running from"
+
+#: FMain.class:313
+msgid "Contacte al desarrollador del programa para reportar el error."
+msgstr "Contact the program developer to report the error."
+
+#: FMain.class:313
+msgid "La vista que intenta guardar no esta configurada adecuadamente."
+msgstr "The view you are trying to save is not configured properly."
+
+#: FMain.class:348
+msgid "Los filtros todavía no están implementados"
+msgstr ""
+
+#: FMain.class:574
+msgid "Debe seleccionar un archivo compatible"
+msgstr "You must select a compatible file"
+
+#: FMain.class:626
+msgid "Hay un error en la configuración de los encabezados"
+msgstr "There is an error in the configuration of the headers"
+
+#: FMain.class:631
+msgid "Debe seleccionar alguna entidad con la que trabajar"
+msgstr ""
+
+#: FMain.form:53
+msgid "Archivo"
+msgstr "Archive"
+
+#: FMain.form:56
+msgid "Importar"
+msgstr "To import"
+
+#: FMain.form:61
+msgid "Exportar"
+msgstr "To export"
+
+#: FMain.form:66
+msgid "Respaldar"
+msgstr "Support"
+
+#: FMain.form:71
+msgid "Restaurar"
+msgstr "Restore"
+
+#: FMain.form:76
+msgid "Salir"
+msgstr "Get out"
+
+#: FMain.form:83
+msgid "Acciones"
+msgstr "Actions"
+
+#: FMain.form:86
+msgid "Eviar un correo electrónico"
+msgstr ""
+
+#: FMain.form:92
+msgid "Configuración"
+msgstr "Configuration"
+
+#: FMain.form:95
+msgid "Preferencias"
+msgstr "Preferences"
+
+#: FMain.form:113
+msgid "Informes"
+msgstr "Reports"
+
+#: FMain.form:122
+msgid "Información"
+msgstr "Information"
+
+#: FMain.form:130
+msgid "Ayuda"
+msgstr "Help"
+
+#: FMain.form:147
+msgid "Ajustar las preferencias"
+msgstr "Adjust preferences"
+
+#: FMain.form:153
+msgid "Imprimir la lista de contactos"
+msgstr "Print the contact list"
+
+#: FMain.form:159
+msgid "Abrir el formulario de pruebas de funciones"
+msgstr "Open the function test form"
+
+#: FMain.form:165
+msgid "Importar contactos"
+msgstr "Import contacts"
+
+#: FMain.form:171
+msgid "Exportar contactos"
+msgstr "Export contacts"
+
+#: FMain.form:250
+msgid "Agregar"
+msgstr "Add"
+
+#: FMain.form:256
+msgid "Guardar"
+msgstr "Save"
+
+#: FMain.form:262
+msgid "Borrar"
+msgstr "Delete"
+
+#: FMain.form:268
+msgid "Editar"
+msgstr "Edit"
+
+#: MData.module:73
+msgid "La base de datos no sera creada"
+msgstr "The database will not be created"
+
+#: MData.module:73
+msgid "No existe el archivo"
+msgstr "File not exist"
+
+#: MData.module:319
+msgid "Existen"
+msgstr "Exist"
+
+#: MData.module:319
+msgid "Se utilizara el primero de la lista"
+msgstr "The first of the list will be used"
+
+#: MData.module:319
+msgid "coincidencias"
+msgstr "Coincidences"
+
+#: MData.module:319
+msgid "pero debería ser una sola"
+msgstr "But it should be one"
+
+#: MStarter.module:193
+msgid "No se pudo abrir la conexión a la base de datos"
+msgstr "Failed to open connection to database"
+
+#: MStarter.module:200
+msgid "Índice"
+msgstr "Index"
+
+#: MStarter.module:201
+msgid "Nombre"
+msgstr "Name"
+
+#: MStarter.module:204
+msgid "Apellido"
+msgstr "Last name"
+
+#: MStarter.module:206
+msgid "Apodo"
+msgstr "Nickname"
+
+#: MStarter.module:207
+msgid "Cumpleaños"
+msgstr "Birthday"
+
+#: MStarter.module:208
+msgid "Rol"
+msgstr "Role"
+
+#: MStarter.module:209
+msgid "División"
+msgstr "Division"
+
+#: MStarter.module:210
+msgid "Organización"
+msgstr "Organization"
+
+#: MStarter.module:211
+msgid "Teléfono fijo"
+msgstr "Landline"
+
+#: MStarter.module:213
+msgid "Teléfono móvil"
+msgstr "Mobile phone"
+
+#: MStarter.module:217
+msgid "Usuario"
+msgstr "User"
+
+#: MStarter.module:218
+msgid "Servidor"
+msgstr "Server"
+
+#: MStarter.module:221
+msgid "Dirección"
+msgstr "Address"
+
+#: MStarter.module:222
+msgid "Ciudad"
+msgstr "City"
+
+#: MStarter.module:223
+msgid "Código postal"
+msgstr "Postal code"
+
+#: MStarter.module:224
+msgid "Provincia"
+msgstr "Province"
+
+#: MStarter.module:225
+msgid "País"
+msgstr "Country"
+
+#: MStarter.module:226
+msgid "Grupo"
+msgstr "Group"
+
+#: MStarter.module:230
+msgid "Código"
+msgstr "Code"
+
+#: MStarter.module:232
+msgid "Número"
+msgstr "Number"
+
+#: MStarter.module:233
+msgid "Capital"
+msgstr "Capital"
+
+#: MStarter.module:234
+msgid "Notas"
+msgstr "Notes"
+
+#: MStarter.module:274
+msgid "Fíjo"
+msgstr "Fixed"
+
+#: MStarter.module:275
+msgid "Móvil"
+msgstr "Mobile"
+
+#: MStarter.module:278
+msgid "Correo"
+msgstr "Mail"
+
+#: MStarter.module:290
+msgid "Total"
+msgstr "Total"
+
+#: MStarter.module:295
+msgid "Cantidad"
+msgstr "Quantity"
+
+#: MStarter.module:334
+msgid "Contactos"
+msgstr "Contacts"
+
+#: MStarter.module:335
+msgid "Apellidos"
+msgstr "Surnames"
+
+#: MStarter.module:336
+msgid "Nombres"
+msgstr ""
+
+#: MStarter.module:337
+msgid "Apodos"
+msgstr "Nicknames"
+
+#: MStarter.module:338
+msgid "Grupos"
+msgstr "Groups"
+
+#: MStarter.module:339
+msgid "Ciudades"
+msgstr "Towns"
+
+#: MStarter.module:340
+msgid "Provincias"
+msgstr "Provinces"
+
+#: MStarter.module:341
+msgid "Países"
+msgstr "Countries"
+
+#: MStarter.module:342
+msgid "Servidores"
+msgstr "Web hosting"
+
+#: MStarter.module:343
+msgid "Roles"
+msgstr "Roles"
+
+#: MStarter.module:345
+msgid "Organizaciones"
+msgstr "Organizations"
+
+#: MUtility.module:34
+msgid "Seleccionar directorio"
+msgstr "Select directory"
+
+#: MUtility.module:53
+msgid "Seleccionar archivo"
+msgstr "Select file"
+
+#: MUtility.module:58
+msgid "Filtro"
+msgstr "Filter"
+
+#: MUtility.module:393
+msgid "Falta el paquete"
+msgstr "Package missing"
+
+#: MUtility.module:978
+msgid "El archivo"
+msgstr ""
+
+#: MUtility.module:978
+msgid "hay caracteres no compatibles"
+msgstr "There are unsupported characters"
+
+#: MUtility.module:1035
+msgid "Hola"
+msgstr "Hello"
+
+#: MValidator.module:200
+msgid "Espacios al inicio y al final"
+msgstr "Spaces at the beginning and at the end"
+
+#: MValidator.module:202
+msgid "Espacio al inicio"
+msgstr "Space to the beginning"
+
+#: MValidator.module:206
+msgid "Espacio al final"
+msgstr "Space at the end"
+
+#: MValidator.module:211
+msgid "Repetidos"
+msgstr "Repeated"
+
+#: MValidator.module:238
+msgid "Excluidos"
+msgstr "Excluded"
+
+#: MValidator.module:242
+msgid "Mas de una letra mayúscula"
+msgstr "More than one capital letter"
+
+#: Msys.module:353
+msgid "Desconocido"
+msgstr "Unknown"
+
+#: Msys.module:505
+msgid "Falta instalar el paquete"
+msgstr "Package not installed"
+
+#: Msys.module:508
+msgid "Faltan instalar los siguientes paquetes"
+msgstr "The following packages are missing"
+
+#: Msys.module:530
+msgid "No"
+msgstr "Not"
+
+#: Msys.module:530
+msgid "Puede usar la siguente orden"
+msgstr ""
+
+#: Msys.module:530
+msgid "Sí"
+msgstr "Yes"
+
+#: Msys.module:530
+msgid "¿Quiere abrir la terminal para poceder?"
+msgstr "Do you want to open the terminal to poceder?"
+
+#: Msys.module:580
+msgid "Puede usar el siguente commando"
+msgstr ""

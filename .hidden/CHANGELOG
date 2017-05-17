@@ -1,0 +1,9 @@
+* Mon Jan 30 2017 Martín Belmonte <planeta4@openmailbox.org> 0.0.30
+- Correccion de un error en la creación de la base de datos en el primer arranque.
+
+* Sun Jan 29 2017 Martín Belmonte <planeta4@openmailbox.org> 0.0.29
+- Correccion de un error en la creación de la base de datos en el primer arranque.
+
+* Sun Jan 29 2017 Martín <planeta4@openmailbox.org> 0.0.29
+- Lanzamiento inicial
+

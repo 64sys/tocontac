@@ -1,8 +1,8 @@
-FMain
-Contacts managment
+MStarter
+Lista de contactos
 0
 0
-0.0.1
+0.0.30
 
 gb.image
 gb.gui.qt
@@ -11,5 +11,6 @@ gb.db
 gb.desktop.x11
 gb.desktop
 gb.settings
+gb.pcre
 gb.xml
 

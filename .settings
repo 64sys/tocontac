@@ -1,135 +1,123 @@
+[Bookmarks]
+MData=[787]
+
 [Breakpoints]
 Count=0
 
 [DebugWindow]
-Count=0
+Count=1
+DebugWindow[1]="stxValues"
 
-[DebugWindow/FMain.conProgram]
-Geometry=[15,267,224,280]
+[DebugWindow/MStarter.stxFieldsTableCurrent]
+Geometry=[1105,247,224,422]
 
-[DebugWindow/FMain.stxTablesFields]
-Geometry=[1646,235,224,843]
+[DebugWindow/MStarter.stxFieldsViewCurrent]
+Geometry=[1340,263,224,303]
 
-[DebugWindow/MData.DBSqlite(stxProgram)]
-Geometry=[352,25,703,318]
+[DebugWindow/MStarter.stxProgram]
+Geometry=[1083,332,514,717]
 
-[DebugWindow/MData.getTableInfo(conProgram, "contacts")]
-Geometry=[1061,593,224,280]
+[DebugWindow/MStarter.stxTableFields]
+Geometry=[1689,752,224,280]
 
-[DebugWindow/Split(strSentence, "\n")]
-Geometry=[0,25,224,280]
+[DebugWindow/MStarter.stxViewFields[intView]]
+Geometry=[1572,199,309,406]
 
-[DebugWindow/cmo]
-Geometry=[0,25,224,280]
+[DebugWindow/MStarter.stxViewFields[int]]
+Geometry=[982,508,224,280]
 
-[DebugWindow/cntInfo]
-Geometry=[1341,301,224,280]
-
-[DebugWindow/cntProgram]
-Geometry=[598,214,599,385]
-
-[DebugWindow/con]
-Geometry=[13,164,224,280]
+[DebugWindow/MStarter.stxViewsEx]
+Geometry=[-10,39,224,280]
 
 [DebugWindow/conCreate]
-Geometry=[266,151,224,280]
-
-[DebugWindow/conData]
-Geometry=[1474,485,407,470]
+Geometry=[866,331,419,574]
 
 [DebugWindow/conProgram]
-Geometry=[601,63,454,507]
-
-[DebugWindow/conProgram.Tables]
-Geometry=[444,144,224,280]
+Geometry=[0,47,417,644]
 
 [DebugWindow/connDB]
-Geometry=[1262,582,224,280]
+Geometry=[10,28,224,280]
 
-[DebugWindow/grwData.Rows[intR]]
-Geometry=[36,25,224,280]
+[DebugWindow/ctnInfo]
+Geometry=[903,265,224,280]
+
+[DebugWindow/grwData]
+Geometry=[1007,408,224,280]
+
+[DebugWindow/grwData[intRow, 8]]
+Geometry=[-10,17,224,280]
+
+[DebugWindow/obj.parent]
+Geometry=[-12,21,224,280]
 
 [DebugWindow/resCheckRef]
-Geometry=[613,59,224,280]
+Geometry=[-10,17,224,280]
 
-[DebugWindow/resCombo]
-Geometry=[1586,110,224,280]
+[DebugWindow/resExist]
+Geometry=[1664,684,224,280]
 
-[DebugWindow/resEdit]
-Geometry=[526,25,224,280]
+[DebugWindow/stxButtonsFields]
+Geometry=[1656,112,224,406]
 
-[DebugWindow/resIns]
-Geometry=[17,567,224,280]
+[DebugWindow/stxComp]
+Geometry=[190,45,224,280]
+
+[DebugWindow/stxDBFields]
+Geometry=[-10,17,224,280]
+
+[DebugWindow/stxDBFields[intField]]
+Geometry=[1296,424,224,280]
 
 [DebugWindow/stxEdit]
-Geometry=[692,188,601,867]
+Geometry=[-10,17,224,280]
 
-[DebugWindow/stxFieldInfo]
-Geometry=[1461,417,266,550]
+[DebugWindow/stxEdit[intField]]
+Geometry=[-10,17,224,280]
 
-[DebugWindow/stxFieldTmp]
-Geometry=[0,25,224,280]
+[DebugWindow/stxExp]
+Geometry=[1328,508,224,280]
+
+[DebugWindow/stxExp[int]]
+Geometry=[1241,182,224,280]
 
 [DebugWindow/stxFields]
-Geometry=[-77,441,224,280]
-
-[DebugWindow/stxInsert]
-Geometry=[0,643,224,280]
-
-[DebugWindow/stxKeySQLite]
-Geometry=[229,41,224,280]
-
-[DebugWindow/stxOrder]
-Geometry=[1044,433,224,280]
-
-[DebugWindow/stxOrderColumn]
-Geometry=[1091,51,224,280]
-
-[DebugWindow/stxOrderType]
-Geometry=[1459,84,224,280]
-
-[DebugWindow/stxPackages]
-Geometry=[0,25,224,280]
+Geometry=[1362,684,224,280]
 
 [DebugWindow/stxProgram]
-Geometry=[621,109,581,301]
+Geometry=[20,283,224,280]
 
-[DebugWindow/stxRefFields]
-Geometry=[0,41,224,280]
+[DebugWindow/stxSqlExistFields]
+Geometry=[983,468,224,280]
 
-[DebugWindow/stxSentence]
-Geometry=[737,808,444,529]
+[DebugWindow/stxSqlExistWhere]
+Geometry=[-10,17,224,280]
 
-[DebugWindow/stxTable]
-Geometry=[1018,144,353,470]
+[DebugWindow/stxTag]
+Geometry=[982,158,224,280]
 
-[DebugWindow/stxTableInfo]
-Geometry=[856,25,914,384]
-
-[DebugWindow/stxTables]
-Geometry=[85,91,224,280]
-
-[DebugWindow/stxTitles]
-Geometry=[36,45,245,308]
+[DebugWindow/stxTmp]
+Geometry=[987,398,224,342]
 
 [DebugWindow/stxVKey]
-Geometry=[1238,756,224,280]
+Geometry=[1277,319,224,280]
+
+[DebugWindow/stxVal]
+Geometry=[1218,156,224,280]
 
 [DebugWindow/stxValues]
-Geometry=[1001,220,224,280]
+Geometry=[1632,106,224,722]
 
-[DebugWindow/stxWordsSQLite]
-Geometry=[1123,25,224,280]
+[DebugWindow/stxViewFields]
+Geometry=[1057,62,750,987]
 
-[DebugWindow/tbl]
-Geometry=[679,72,224,280]
+[DebugWindow/stxViews]
+Geometry=[41,70,224,280]
+
+[Executable]
+Path="tocontac.gambas"
 
 [OpenFile]
-Count=3
-File[1]=".src/FMain.form"
-Active=2
-File[2]=".src/FMain.class:0.641"
-File[3]=".src/gef/MData.module:24.650"
+Count=0
 
 [Watches]
 Count=0

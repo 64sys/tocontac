@@ -1,0 +1,399 @@
+' Gambas module file
+
+'
+' Contacts managment
+' Agenda de contactos
+'
+' Copyright (C) Martín Belmonte
+'
+' This program is free software; you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation; either version 2 of the License, or
+' (at your option) any later version.
+'
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+'
+' You should have received a copy of the GNU General Public License
+' along with this program; if not, write to the Free Software
+' Foundation, Inc., 51 Franklin St, Fifth Floor,
+' Boston, MA  02110-1301  USA
+'
+' Este módulo hara una serie de comprobaciones antes de iniciar la aplicacion.
+'-Dependencias
+'-Directorios locales
+'-Settings
+'-Base de datos
+
+Public stxProgram As New String[] ' Parametros del programa
+'0 Database Engine
+'1 Database Host
+'2 Database Name
+'3 Database Path
+'4 SQL Query
+'5 Current Entity (table)
+'6
+'7
+'8
+'9 Ide o ejecutable
+Public stxDBEngines As New String[] ' Motores de bases de datos soportadas por gambas
+Public conProgram As New Connection ' Conexión a la base de datos
+
+Public stxTables As New String[] ' Lista de tablas
+Public stxTableFields As New String[][] 'Lista de campos de las tablas
+
+Public stxViews As New String[] ' Lista de vistas
+Public stxViewsEx As New String[][] ' Lista de vistas mejorada
+Public stxViewFields As New String[][] 'Lista de campos de las vistas
+
+Public stxTitles As New String[][] 'Lista de títulos de los campos de las vistas y de las tablas
+
+'Public stxCustom As New String[] ' Lista de vistas creadas por SQL personalizado
+'Public stxCustomSQL As New String[] ' Lista de SQL para las vistas personalizadas
+' Las vistas custom son archivos estilo myview.sql en el directorio de la aplicación y son levantadas cuando inicia el programa.
+
+Public stxFieldsTableCurrent As New String[] ' lista de campos para crear los botones de filtros
+Public stxFieldsViewCurrent As New String[] ' lista de campos para crear los botones de filtros
+Public resProgram As Result
+
+Public Sub Main()
+
+  Dim stxPackages As New String[]
+  Dim strAppPath As String
+  Dim strSQL As String
+  Dim resSQL As Result
+  Dim intTable As Integer
+  Dim intView As Integer
+  Dim strTableTmp As String
+  Dim strViewTmp As String
+  Dim strDBName As String
+  Dim stxTmp As New Variant[][]
+  Dim intTmp As Integer
+  Dim intP As Integer
+  Dim intZ As Integer
+
+  strAppPath = User.Home &/ "." & Application.Name
+  stxDBEngines = MUtility.FileLoad("engines.txt") ' Motores de bases de datos soportados por gambas
+
+  ' Existencia de directorio de la aplicacion en el directorio home. Esto se ejecutara una unica vez.
+  ' Aqui se pueden agregar mas comprobaciones de este tipo para copia de archivos de configuracion y demas cosas similares
+  If Exist(User.Home &/ "." & Application.Name) = False Then
+    Mkdir User.Home &/ "." & Application.Name
+  Endif
+
+  ' Copia del archivo de ayuda de la aplicación. //////////////////////////////////////////////////////////
+  If Exist("README.md") = True Then
+    If Exist(User.Home &/ "." & Application.Name &/ "README.md") = False Then
+      Copy "README.md" To User.Home &/ "." & Application.Name &/ "README.md"
+    Endif
+  Endif
+
+  ' Estado de las dependencias.//////////////////////////////////////////////////////////////////////
+  stxPackages = MUtility.FileLoad("depend.txt")
+  If stxPackages.Count > 0 Then
+    Msys.PkgDep(stxPackages)
+  Endif
+
+  ' Carga de los parametros del prgrama 1º pasada gb.settings./////////////////////////
+  strDBName = Replace(Application.Name & ".sqlite", "-", "")
+  stxProgram = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
+
+  stxProgram[0] = Settings["Program/Database-Engine", stxDBEngines[3]]
+  stxProgram[1] = Settings["Program/Database-Host", strAppPath]
+  stxProgram[2] = Settings["Program/Database-Name", strDBName]
+  stxProgram[3] = Settings["Program/Database-Path", strAppPath &/ strDBName]
+  stxProgram[4] = "view_contacts"
+
+  ' Existencia de la base de datos.////////////////////////////////////////////////////
+  conProgram = MData.DBSqlite(stxProgram)
+  conProgram.Name = stxProgram[2]
+  conProgram.Open
+
+  ' Analisis de la base de datos.////////////////////////////////////////////////////
+
+  LoadTitles() ' Carga de los títulos de los campos
+
+  stxTables.Clear
+  stxTables.Insert(MData.getTables(conProgram, "table")) ' Lista de TABLAS
+
+  stxTableFields.Clear
+  For intTable = 0 To stxTables.Max
+    strTableTmp = stxTables[intTable]
+    strSQL = "select * from " & strTableTmp
+    resSQL = conProgram.Exec(strSQL)
+
+    stxTmp.Clear
+    stxTmp.Insert(MData.getFields(conProgram, strTableTmp, "table", stxTitles))
+
+    For intTmp = 0 To stxTmp.Max
+      stxTableFields.Add(stxTmp[intTmp])
+    Next
+  Next
+  Print "###Tablas###"
+  For intP = 0 To stxTableFields.Max
+    Print stxTableFields[intP].Join(":")
+  Next
+
+  stxViews.Clear
+  stxViews.Insert(MData.getTables(conProgram, "view")) ' Lista de VISTAS
+
+  For intView = 0 To stxViews.Max
+    strViewTmp = stxViews[intView]
+    strSQL = "select * from " & strViewTmp
+    resSQL = conProgram.Exec(strSQL)
+    stxViewFields.Insert(MData.getFields(conProgram, strViewTmp, "view", stxTitles))
+  Next
+  Print "###Vistas ###"
+  For intP = 0 To stxViewFields.Max
+    Print stxViewFields[intP].Join(":")
+  Next
+
+  ' Carga de los parametros del prgrama 2º pasada SQL //////////////////////////////
+  stxProgram[5] = MData.SqlMake(stxProgram[4], stxViewFields)
+
+  ' Desde donde se esta ejecutando la aplicación
+  Select MUtility.WhereRun()
+
+    Case 0
+      stxProgram[9] = "gambas"
+    Case 1
+      stxProgram[9] = "ide"
+  End Select
+  '
+  ' Paramartros para la Exportacion de datos
+  stxProgram[10] = Settings["Program/Export-Directory", User.Home]
+  stxProgram[11] = Settings["Program/Export-Separator", "\t"]
+  stxProgram[12] = Settings["Program/Export-Headers", "yes"]
+
+  ' Paramartros para la Importacion de datos
+  stxProgram[13] = Settings["Program/Import-Directory", User.Home]
+  stxProgram[14] = Settings["Program/Import-Separator", "\t"]
+  stxProgram[15] = Settings["Program/Import-Headers", "yes"]
+  '
+  ' Paramartros para el comportamiento visual del formulario principal
+  stxProgram[6] = Settings["Program/Window", "normal"]
+  stxProgram[16] = Settings["Program/Show-Filter-Bar", "no"]
+  stxProgram[17] = Settings["Program/Show-Order-Bar", "no"]
+
+  ' Nombre de la vista en el idioma local
+  For intZ = 0 To MStarter.stxViewsEx.Max
+    If stxViewsEx[intZ][0] = stxProgram[4] Then
+      stxProgram[7] = stxViewsEx[intZ][1]
+    Endif
+  Next
+
+  ' Apertura del formulario principal
+
+  If conProgram.Opened Then
+    FMain.Show()
+  Else
+    Message.Warning(("No se pudo abrir la conexión a la base de datos"))
+  Endif
+
+End
+
+Private Function LoadTitles() '' La carga de títulos de esta manera permite luego traducir la aplicacion mas facilmente. Si se usa un método con archivo de texto estos textos no pueden traducirse.
+
+  stxTitles.Add(["contacts", "contactindx", ("Índice")])
+  stxTitles.Add(["contacts", "contactname", ("Nombre")])
+  stxTitles.Add(["contacts", "contactfirst1", ("Nombre") & "1"])
+  stxTitles.Add(["contacts", "contactfirst2", ("Nombre") & "2"])
+  stxTitles.Add(["contacts", "contactlast1", ("Apellido") & "1"])
+  stxTitles.Add(["contacts", "contactlast2", ("Apellido") & "2"])
+  stxTitles.Add(["contacts", "contactnik", ("Apodo")])
+  stxTitles.Add(["contacts", "contactbirth", ("Cumpleaños")])
+  stxTitles.Add(["contacts", "contactrole", ("Rol")])
+  stxTitles.Add(["contacts", "contactsection", ("División")])
+  stxTitles.Add(["contacts", "contactorg", ("Organización")])
+  stxTitles.Add(["contacts", "contactfix1", ("Teléfono fijo") & "1"])
+  stxTitles.Add(["contacts", "contactfix2", ("Teléfono fijo") & "2"])
+  stxTitles.Add(["contacts", "contactmov1", ("Teléfono móvil") & "1"])
+  stxTitles.Add(["contacts", "contactmov2", ("Teléfono móvil") & "2"])
+  stxTitles.Add(["contacts", "contactfix", ("Teléfono fijo")])
+  stxTitles.Add(["contacts", "contactmov", ("Teléfono móvil")])
+  stxTitles.Add(["contacts", "contactemail1", ("Usuario") & "1"])
+  stxTitles.Add(["contacts", "contactserver1", ("Servidor") & "1"])
+  stxTitles.Add(["contacts", "contactemail2", ("Usuario") & "2"])
+  stxTitles.Add(["contacts", "contactserver2", ("Servidor") & "2"])
+  stxTitles.Add(["contacts", "contactaddress", ("Dirección")])
+  stxTitles.Add(["contacts", "contactcity", ("Ciudad")])
+  stxTitles.Add(["contacts", "contactzip", ("Código postal")])
+  stxTitles.Add(["contacts", "contactprovince", ("Provincia")])
+  stxTitles.Add(["contacts", "contactcountry", ("País")])
+  stxTitles.Add(["contacts", "contactgroup", ("Grupo")])
+
+  stxTitles.Add(["countries", "countryindx", ("Índice")])
+  stxTitles.Add(["countries", "countryname", ("País")])
+  stxTitles.Add(["countries", "countryc2", ("Código") & "2"])
+  stxTitles.Add(["countries", "countryc3", ("Código") & "3"])
+  stxTitles.Add(["countries", "countryint", ("Número")])
+  stxTitles.Add(["countries", "countrycapital", ("Capital")])
+  stxTitles.Add(["countries", "countryremark", ("Notas")])
+
+  stxTitles.Add(["lastnames", "lastindx", ("Índice")])
+  stxTitles.Add(["lastnames", "lastname", ("Apellido")])
+
+  stxTitles.Add(["firstnames", "firstindx", ("Índice")])
+  stxTitles.Add(["firstnames", "firstname", ("Nombre")])
+
+  stxTitles.Add(["niks", "nikindx", ("Índice")])
+  stxTitles.Add(["niks", "nikname", ("Apodo")])
+
+  stxTitles.Add(["orgs", "orgindx", ("Índice")])
+  stxTitles.Add(["orgs", "orgname", ("Organización")])
+
+  stxTitles.Add(["servers", "serverindx", ("Índice")])
+  stxTitles.Add(["servers", "servername", ("Servidor")])
+
+  stxTitles.Add(["cities", "cityindx", ("Índice")])
+  stxTitles.Add(["cities", "cityname", ("Ciudad")])
+
+  stxTitles.Add(["groups", "groupindx", ("Índice")])
+  stxTitles.Add(["groups", "groupname", ("Grupo")])
+
+  stxTitles.Add(["provinces", "provinceindx", ("Índice")])
+  stxTitles.Add(["provinces", "provincename", ("Provincia")])
+
+  stxTitles.Add(["roles", "roleindx", ("Índice")])
+  stxTitles.Add(["roles", "rolename", ("Rol")])
+
+  stxTitles.Add(["sections", "sectionindx", ("Índice")])
+  stxTitles.Add(["sections", "sectionname", ("División")])
+
+  stxTitles.Add(["view_contacts", "contactindx", ("Índice")])
+  stxTitles.Add(["view_contacts", "contactname", ("Nombre")])
+  stxTitles.Add(["view_contacts", "contactnik", ("Apodo")])
+  stxTitles.Add(["view_contacts", "contactbirth", ("Cumpleaños")])
+  stxTitles.Add(["view_contacts", "contactorg", ("Organización")])
+  stxTitles.Add(["view_contacts", "contactrole", ("Rol")])
+  stxTitles.Add(["view_contacts", "contactsection", ("División")])
+  stxTitles.Add(["view_contacts", "contactgroup", ("Grupo")])
+  stxTitles.Add(["view_contacts", "contactfix1", ("Fíjo") & "1"])
+  stxTitles.Add(["view_contacts", "contactmov1", ("Móvil") & "1"])
+  stxTitles.Add(["view_contacts", "contactfix2", ("Fíjo") & "2"])
+  stxTitles.Add(["view_contacts", "contactmov2", ("Móvil") & "2"])
+  stxTitles.Add(["view_contacts", "contactemail1", ("Correo") & "1"])
+  stxTitles.Add(["view_contacts", "contactemail2", ("Correo") & "2"])
+  stxTitles.Add(["view_contacts", "contactcity", ("Ciudad")])
+  stxTitles.Add(["view_contacts", "contactprovince", ("Provincia")])
+  stxTitles.Add(["view_contacts", "contactcountry", ("País")])
+
+  stxTitles.Add(["view_countries", "countryindx", ("Índice")])
+  stxTitles.Add(["view_countries", "countryname", ("País")])
+  stxTitles.Add(["view_countries", "countryint", ("Número")])
+  stxTitles.Add(["view_countries", "countrycapital", ("Capital")])
+  stxTitles.Add(["view_countries", "countryc2", ("Código") & "2"])
+  stxTitles.Add(["view_countries", "countryc3", ("Código") & "3"])
+  stxTitles.Add(["view_countries", "countryqty", ("Total")])
+  stxTitles.Add(["view_countries", "countryremark", ("Notas")])
+
+  stxTitles.Add(["view_lastnames", "lastindx", ("Índice")])
+  stxTitles.Add(["view_lastnames", "lastname", ("Apellido")])
+  stxTitles.Add(["view_lastnames", "lastqty", ("Cantidad")])
+
+  stxTitles.Add(["view_firstnames", "firstindx", ("Índice")])
+  stxTitles.Add(["view_firstnames", "firstname", ("Nombre")])
+  stxTitles.Add(["view_firstnames", "firstqty", ("Cantidad")])
+
+  stxTitles.Add(["view_niks", "nikindx", ("Índice")])
+  stxTitles.Add(["view_niks", "nikname", ("Apodo")])
+  stxTitles.Add(["view_niks", "nikqty", ("Cantidad")])
+
+  stxTitles.Add(["view_orgs", "orgindx", ("Índice")])
+  stxTitles.Add(["view_orgs", "orgname", ("Organización")])
+  stxTitles.Add(["view_orgs", "orgqty", ("Cantidad")])
+
+  stxTitles.Add(["view_servers", "serverindx", ("Índice")])
+  stxTitles.Add(["view_servers", "servername", ("Servidor")])
+  stxTitles.Add(["view_servers", "serverqty", ("Total")])
+
+  stxTitles.Add(["view_cities", "cityindx", ("Índice")])
+  stxTitles.Add(["view_cities", "cityname", ("Ciudad")])
+  stxTitles.Add(["view_cities", "cityqty", ("Total")])
+
+  stxTitles.Add(["view_groups", "groupindx", ("Índice")])
+  stxTitles.Add(["view_groups", "groupname", ("Grupo")])
+  stxTitles.Add(["view_groups", "groupqty", ("Total")])
+
+  stxTitles.Add(["view_provinces", "provinceindx", ("Índice")])
+  stxTitles.Add(["view_provinces", "provincename", ("Provincia")])
+  stxTitles.Add(["view_provinces", "provinceqty", ("Total")])
+
+  stxTitles.Add(["view_roles", "roleindx", ("Índice")])
+  stxTitles.Add(["view_roles", "rolename", ("Rol")])
+  stxTitles.Add(["view_roles", "roleqty", ("Total")])
+
+  stxTitles.Add(["view_sections", "sectionindx", ("Índice")])
+  stxTitles.Add(["view_sections", "sectionname", ("División")])
+  stxTitles.Add(["view_sections", "sectionqty", ("Total")])
+
+  ' Nombres de tablas y vistas
+  stxViewsEx.Add(["view_contacts", ("Contactos"), "icon:/16/identity"])
+  stxViewsEx.Add(["view_lastnames", ("Apellidos"), "icon:/16/group"])
+  stxViewsEx.Add(["view_firstnames", ("Nombres"), "icon:/16/group"])
+  stxViewsEx.Add(["view_niks", ("Apodos"), "icon:/16/group"])
+  stxViewsEx.Add(["view_groups", ("Grupos"), "icon:/16/internet"])
+  stxViewsEx.Add(["view_cities", ("Ciudades"), "icon:/16/internet"])
+  stxViewsEx.Add(["view_provinces", ("Provincias"), "icon:/16/internet"])
+  stxViewsEx.Add(["view_countries", ("Países"), "icon:/16/language"])
+  stxViewsEx.Add(["view_servers", ("Servidores"), "icon:/16/mail"])
+  stxViewsEx.Add(["view_roles", ("Roles"), "icon:/16/identity"])
+  stxViewsEx.Add(["view_sections", ("División"), "icon:/16/identity"])
+  stxViewsEx.Add(["view_orgs", ("Organizaciones"), "icon:/16/access"])
+
+End
+
+Public Function Terminator() As Integer ''Funcion que guarda las configuraciones que se modificaron en el programa antes de cerrarlo.
+
+  Dim int As Integer
+
+  For int = 0 To stxViewFields.Max
+
+    Settings[stxViewFields[int][0] & "-Order" &/ stxViewFields[int][1]] = stxViewFields[int][3]
+    Settings[stxViewFields[int][0] & "-FilterType" &/ stxViewFields[int][1]] = stxViewFields[int][4]
+    Settings[stxViewFields[int][0] & "-FilterValue" &/ stxViewFields[int][1]] = stxViewFields[int][5]
+
+    Select stxViewFields[int][6]
+      Case "", "75"
+        Settings[stxViewFields[int][0] & "-Width" &/ stxViewFields[int][1]] = ""
+      Case Else
+        Settings[stxViewFields[int][0] & "-Width" &/ stxViewFields[int][1]] = stxViewFields[int][6]
+    End Select
+
+    'Settings[stxViewFields[int][0] & "-Spare1" &/ stxViewFields[int][1]] = stxViewFields[int][7]
+    'Settings[stxViewFields[int][0] & "-Spare2" &/ stxViewFields[int][1]] = stxViewFields[int][8]
+    'Settings[stxViewFields[int][0] & "-Spare3" &/ stxViewFields[int][1]] = stxViewFields[int][9]
+
+  Next
+
+  For int = 0 To stxProgram.Max
+    Settings["Program/Database-Engine"] = stxProgram[0]
+    Settings["Program/Database-Host"] = stxProgram[1]
+    Settings["Program/Database-Name"] = stxProgram[2]
+    Settings["Program/Database-Path"] = stxProgram[3]
+    Settings["Program/Default-View"] = stxProgram[4]
+
+    Settings["Program/Last-Query"] = stxProgram[5]
+
+    ' Paramartros para la Exportacion de datos
+    Settings["Program/Export-Directory"] = stxProgram[10]
+    Settings["Program/Export-Separator"] = stxProgram[11]
+    Settings["Program/Export-Headers"] = stxProgram[12]
+    ' Paramartros para la Importacion de datos
+    Settings["Program/Import-Directory"] = stxProgram[13]
+    Settings["Program/Import-Separator"] = stxProgram[14]
+    Settings["Program/Import-Headers"] = stxProgram[15]
+    ' Paramartros para el comportamiento visual del formulario principal
+    Settings["Program/Window"] = stxProgram[6]
+    Settings["Program/Show-Filter-Bar"] = stxProgram[16]
+    Settings["Program/Show-Order-Bar"] = stxProgram[17]
+
+  Next
+
+  Settings.Save
+
+  Return 1
+
+End
